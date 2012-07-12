@@ -14,7 +14,12 @@
   (table :FOOD_DES)
   (database devel))
 
-;form sql command
+(defentity FD_GROUP
+  (pk :FdGrp_Cd)
+  (table :FD_GROUP)
+  (database devel))
+
+; insert data to table 
 (defn insert-db-entry [entry table]
   (insert table (values entry)))
 
@@ -22,15 +27,18 @@
 ;database test commands
 
 ;sqlite3 foodbase.db "select * from FOOD_DES where NDB_No = 1222"
+;sqlite3 foodbase.db "select * from FD_GROUP where FdGrp_Cd = 0800"
 
 ; ------------------------------------------------------
-; database column names  
-(def FOOD_DES-dbcolumns '(
-  "NDB_No","FdGrp_Cd","Long_Desc","Short_Desc","ComName","ManufacName","Survey",
-  "Ref_desc","Refuse","SciName","N_Factor","Pro_Factor","Fat_Factor","CHO_Factor"))
-
-(def FD_GROUP-dbcolumns '(
-  "FdGrp_Cd","FdGrp_Desc")) ;FdGrp_Cd linked to FOOD_DES FdGrp_Cd
+; database column names
+(defn get-dbcolumns [table]
+  (cond
+    (= table "FOOD_DES")
+      '("NDB_No","FdGrp_Cd","Long_Desc","Short_Desc","ComName","ManufacName","Survey",
+        "Ref_desc","Refuse","SciName","N_Factor","Pro_Factor","Fat_Factor","CHO_Factor")
+    (= table "FD_GROUP")
+      '("FdGrp_Cd","FdGrp_Desc") ;FdGrp_Cd linked to FOOD_DES FdGrp_Cd
+      ))
 ; ------------------------------------------------------
 
 ;put values to list
@@ -44,17 +52,19 @@
   (str/replace line #"~" ""))
 
 ; map keys to values
-(defn map-raw-lines [line]
-  ;(zipmap (format "%s-dbcolumns" "FOOD_DES")
-  (zipmap FOOD_DES-dbcolumns
+(defn map-raw-lines [line table]
+    (zipmap (get-dbcolumns table)
     (split-line
       (trim-tildes line))))
 
 (defn -main [& args]
-(with-open [rdr (jio/reader "./src/foodbase/FOOD_DES.txt")]
-  (doseq [line (line-seq rdr)]
-    ;(clojure.pprint/pprint (parse-list (trim-tildes line)))
-    ;(clojure.pprint/pprint (map-raw-lines line))
-    ;(print (map-raw-lines line) "\n")
-    (insert-db-entry (map-raw-lines line) FOOD_DES)
-    )))
+  ; FOOD_DES
+  (with-open [rdr (jio/reader "./materials/FOOD_DES.txt")]
+    (doseq [line (line-seq rdr)]
+      (insert-db-entry (map-raw-lines line "FOOD_DES") FOOD_DES)))
+  
+  ; FD_GROUP
+    (with-open [rdr (jio/reader "./materials/FD_GROUP.txt")]
+    (doseq [line (line-seq rdr)]
+      (insert-db-entry (map-raw-lines line "FD_GROUP") FD_GROUP)))
+)
