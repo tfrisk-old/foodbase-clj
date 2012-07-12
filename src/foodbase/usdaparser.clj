@@ -19,6 +19,11 @@
   (table :FD_GROUP)
   (database devel))
 
+(defentity NUT_DATA
+  (pk :id)
+  (table :NUT_DATA)
+  (database devel))
+
 ; insert data to table 
 (defn insert-db-entry [entry table]
   (insert table (values entry)))
@@ -38,7 +43,10 @@
         "Ref_desc","Refuse","SciName","N_Factor","Pro_Factor","Fat_Factor","CHO_Factor")
     (= table "FD_GROUP")
       '("FdGrp_Cd","FdGrp_Desc") ;FdGrp_Cd linked to FOOD_DES FdGrp_Cd
-      ))
+    (= table "NUT_DATA")
+      '("NDB_No","Nutr_No","Nutr_Val","Num_Data_Pts","Std_Error","Src_Cd","Deriv_Cd","Ref_NDB_No",
+        "Add_Nutr_Mark","Num_Studies","Min","Max","DF","Low_EB","Up_EB","Stat_cmt","CC")
+    ))
 ; ------------------------------------------------------
 
 ;put values to list
@@ -64,7 +72,12 @@
       (insert-db-entry (map-raw-lines line "FOOD_DES") FOOD_DES)))
   
   ; FD_GROUP
-    (with-open [rdr (jio/reader "./materials/FD_GROUP.txt")]
+  (with-open [rdr (jio/reader "./materials/FD_GROUP.txt")]
     (doseq [line (line-seq rdr)]
       (insert-db-entry (map-raw-lines line "FD_GROUP") FD_GROUP)))
+  
+  ; NUT_DATA
+  (with-open [rdr (jio/reader "./materials/NUT_DATA.txt")]
+    (doseq [line (line-seq rdr)]
+      (insert-db-entry (map-raw-lines line "NUT_DATA") NUT_DATA)))
 )
