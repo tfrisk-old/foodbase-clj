@@ -9,21 +9,20 @@
                       :user "foodbase"
                       :password "foodpass"}))
 
-(defentity food-descriptions
-  (pk :id)
+(defentity FOOD_DES
+  (pk :NDB_No)
   (table :FOOD_DES)
   (database devel))
 
 ;form sql command
 (defn insert-db-entry [entry]
-  (insert food-descriptions (values entry)))
+  (insert FOOD_DES (values entry)))
 
 ; ----------------------------------------------
 
 ;sqlite3 foodbase.db
 "create table FOOD_DES (
-id INTEGER PRIMARY KEY,
-NDB_No INTEGER,
+NDB_No INTEGER PRIMARY KEY,
 FdGrp_Cd INTEGER,
 Long_Desc TEXT,
 Short_Desc TEXT,
