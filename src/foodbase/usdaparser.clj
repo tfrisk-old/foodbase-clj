@@ -67,16 +67,19 @@
 
 (defn -main [& args]
   ; FOOD_DES
+  (println "FOOD_DES")
   (with-open [rdr (jio/reader "./materials/FOOD_DES.txt")]
     (doseq [line (line-seq rdr)]
       (insert-db-entry (map-raw-lines line "FOOD_DES") FOOD_DES)))
   
   ; FD_GROUP
+  (println "FD_GROUP")
   (with-open [rdr (jio/reader "./materials/FD_GROUP.txt")]
     (doseq [line (line-seq rdr)]
       (insert-db-entry (map-raw-lines line "FD_GROUP") FD_GROUP)))
   
   ; NUT_DATA
+  (println "NUT_DATA")
   (with-open [rdr (jio/reader "./materials/NUT_DATA.txt")]
     (doseq [line (line-seq rdr)]
       (insert-db-entry (map-raw-lines line "NUT_DATA") NUT_DATA)))
